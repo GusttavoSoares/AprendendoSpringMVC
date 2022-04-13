@@ -6,6 +6,7 @@ import br.com.ifsp.regescweb.repositories.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -30,6 +31,22 @@ public class ProfessorController {
             mv.addObject("statusProfessor", StatusProfessor.values());
 
             return mv;
+        }
+
+        @PostMapping ("/professores")
+        public String create(Professor professor){
+        // Para cada um dos atributos do formulário o spring coloca os valores nesse objeto (nome dos atributos devem ser iguais ao nome dos campos)
+            System.out.println();
+            System.out.println(professor);
+            System.out.println();
+            return "redirect:/professores";
+
+            /* HÁ UM PROBLEMA DE SEGURANÇA: Web Parameter Tampering
+                Um usuário poderia manipular o input manualmente, e colocar um valor.
+                Supondo que ele descubra que há um campo de salario, é possivel adicionar
+                manualmente pelo HTML no navegador um valor. E ele será armazenado no banco
+                de dados como um salário.
+             */
         }
 
 }
