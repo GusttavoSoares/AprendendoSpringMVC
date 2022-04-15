@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class RequisicaoNovoProfessor {
     @NotBlank
     @NotNull
-    private String nome;
+    private String nome; // em caso de erro, NotBlank.requisicaoNovoProfessor.nome
     private StatusProfessor statusProfessor;
     @NotNull
     @DecimalMin("0.0")
