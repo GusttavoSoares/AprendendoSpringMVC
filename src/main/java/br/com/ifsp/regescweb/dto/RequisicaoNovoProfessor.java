@@ -3,13 +3,20 @@ package br.com.ifsp.regescweb.dto;
 import br.com.ifsp.regescweb.models.Professor;
 import br.com.ifsp.regescweb.models.StatusProfessor;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 // Classe DTO (Data Transfer Object)
 // Com essa classe é possível proteger o sistema de usuários que tentem colocar algum campo não esperado
 public class RequisicaoNovoProfessor {
+    @NotBlank
+    @NotNull
     private String nome;
     private StatusProfessor statusProfessor;
+    @NotNull
+    @DecimalMin("0.0")
     private BigDecimal salario;
 
     public String getNome() {
