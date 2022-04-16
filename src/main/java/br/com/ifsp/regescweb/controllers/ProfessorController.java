@@ -92,5 +92,48 @@ public class ProfessorController {
             return new ModelAndView("redirect:/professores");
         }
     }
+    @PostMapping("/{iD}")
+    public ModelAndView update(@PathVariable Long iD, @Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+        ModelAndView mv = new ModelAndView("professores/edit");
+        mv.addObject("listaStatusProfessor", StatusProfessor.values());
+        mv.addObject("professoriD", iD);
+          return mv;
+
+        } else {
+            Optional<Professor> optional = this.professorRepository.findById(iD);
+
+            if (optional.isPresent()){
+                Professor professor = requisicao.toProfessor(optional.get());
+                this.professorRepository.save(professor);
+
+                return new ModelAndView("redirect:/professores/" + professor.getiD());
+
+            }
+            //Não achou um registro na tabela Professor com o id informado
+            else {
+                System.out.println("######## nao achou o professor de iD " + iD + "$$$$$$$$");
+                return new ModelAndView("redirect:/professores");
+            }
+
+
+        }
+
+    }
+
+//    public ModelAndView create(@Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            System.out.println("\n*********** TEM ERROS **************\n");
+//            ModelAndView mv = new ModelAndView("professores/new");
+//            mv.addObject("listaStatusProfessor", StatusProfessor.values());
+//            return mv;
+//        } else {
+//            // Para cada um dos atributos do formulário o spring coloca os valores nesse objeto (nome dos atributos devem ser iguais ao nome dos campos)
+//            Professor professor = requisicao.toProfessor();
+//            this.professorRepository.save(professor);
+//            return new ModelAndView("redirect:/professores/" + professor.getiD());
+//        }
+//
+//    }
 
 }

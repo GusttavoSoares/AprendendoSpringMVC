@@ -26,7 +26,7 @@
                     <td class="col-2" th:text="${professor.salario}">Salário</td>
                     <td class="col-2" th:text="${professor.statusProfessor.toString()}">STATUS</td>
                     <td class="" col-1><a th:href="@{/professores/{professoriD}(professoriD = ${professor.iD})}">Detalhes</a></td>
-                    <td class="" col-1><a href="#">Editar</a></td>
+                    <td class="" col-1><a th:href="@{/professores/{professoriD}/edit(professoriD = ${professor.iD})}">Editar</a></td>
                     <td class="" col-1><a href="#">Deletar</a></td>
                 </tr>
                 </tbody>
