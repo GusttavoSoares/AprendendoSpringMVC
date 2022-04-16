@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 // Classe DTO (Data Transfer Object)
 // Com essa classe é possível proteger o sistema de usuários que tentem colocar algum campo não esperado
-public class RequisicaoNovoProfessor {
+public class RequisicaoFormProfessor {
     @NotBlank
     @NotNull
     private String nome; // em caso de erro, NotBlank.requisicaoNovoProfessor.nome
@@ -50,6 +50,12 @@ public class RequisicaoNovoProfessor {
         professor.setStatusProfessor(this.statusProfessor);
 
         return professor;
+    }
+
+    public void fromProfessor(Professor professor){
+        this.nome = professor.getNome();
+        this.salario = professor.getSalario();
+        this.statusProfessor = professor.getStatusProfessor();
     }
     @Override
     public String toString() {

@@ -1,18 +1,13 @@
 package br.com.ifsp.regescweb.controllers;
 
-import br.com.ifsp.regescweb.dto.RequisicaoNovoProfessor;
+import br.com.ifsp.regescweb.dto.RequisicaoFormProfessor;
 import br.com.ifsp.regescweb.models.Professor;
 import br.com.ifsp.regescweb.models.StatusProfessor;
 import br.com.ifsp.regescweb.repositories.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -20,11 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/professores")
 public class ProfessorController {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    @GetMapping("/professores")
+    @GetMapping("")
     public ModelAndView index() {
 
         List<Professor> professores = this.professorRepository.findAll();
@@ -34,8 +30,8 @@ public class ProfessorController {
         return mv;
     }
 
-    @GetMapping("/professores/new")
-    public ModelAndView nnew(RequisicaoNovoProfessor requisicao) {
+    @GetMapping("/new")
+    public ModelAndView nnew(RequisicaoFormProfessor requisicao) {
         ModelAndView mv = new ModelAndView("professores/new");
         mv.addObject("listaStatusProfessor", StatusProfessor.values());
 
@@ -44,8 +40,8 @@ public class ProfessorController {
 
 
 
-    @PostMapping("/professores")
-    public ModelAndView create(@Valid RequisicaoNovoProfessor requisicao, BindingResult bindingResult) {
+    @PostMapping("")
+    public ModelAndView create(@Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             System.out.println("\n*********** TEM ERROS **************\n");
             ModelAndView mv = new ModelAndView("professores/new");
@@ -59,7 +55,7 @@ public class ProfessorController {
         }
 
     }
-    @GetMapping("professores/{iD}")
+    @GetMapping("/{iD}")
     public ModelAndView show(@PathVariable Long iD){
         Optional <Professor> optional = this.professorRepository.findById(iD);
 
@@ -76,6 +72,25 @@ public class ProfessorController {
             return new ModelAndView("redirect:/professores");
         }
 
+    }
+    @GetMapping ("/{iD}/edit")
+    public ModelAndView edit(@PathVariable Long iD, RequisicaoFormProfessor requisicao){
+        Optional <Professor> optional = this.professorRepository.findById(iD);
+
+
+        if (optional.isPresent()){
+            Professor professor = optional.get();
+            requisicao.fromProfessor(professor);
+            ModelAndView mv = new ModelAndView("professores/edit");
+            mv.addObject("professoriD", professor.getiD());
+            mv.addObject("listaStatusProfessor", StatusProfessor.values());
+
+            return mv;
+        }
+        else{
+            System.out.println("$$$$$$$$$$$$$$$$$ nao achou o professor de iD " +iD + "$$$$$$$$");
+            return new ModelAndView("redirect:/professores");
+        }
     }
 
 }
