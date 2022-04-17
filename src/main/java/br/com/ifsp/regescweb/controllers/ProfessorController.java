@@ -5,6 +5,7 @@ import br.com.ifsp.regescweb.models.Professor;
 import br.com.ifsp.regescweb.models.StatusProfessor;
 import br.com.ifsp.regescweb.repositories.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,6 @@ public class ProfessorController {
     }
 
 
-
     @PostMapping("")
     public ModelAndView create(@Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -53,13 +53,13 @@ public class ProfessorController {
             this.professorRepository.save(professor);
             return new ModelAndView("redirect:/professores/" + professor.getiD());
         }
-
     }
-    @GetMapping("/{iD}")
-    public ModelAndView show(@PathVariable Long iD){
-        Optional <Professor> optional = this.professorRepository.findById(iD);
 
-        if (optional.isPresent()){
+    @GetMapping("/{iD}")
+    public ModelAndView show(@PathVariable Long iD) {
+        Optional<Professor> optional = this.professorRepository.findById(iD);
+
+        if (optional.isPresent()) {
             Professor professor = optional.get();
 
             ModelAndView mv = new ModelAndView("professores/show");
@@ -67,18 +67,18 @@ public class ProfessorController {
             return mv;
         }
         //Não achou um registro na tabela Professor com o id informado
-        else{
-            System.out.println("$$$$$$$$$$$$$$$$$ nao achou o professor de iD " +iD + "$$$$$$$$");
+        else {
+            System.out.println("$$$$$$$$$$$$$$$$$ nao achou o professor de iD " + iD + "$$$$$$$$");
             return new ModelAndView("redirect:/professores");
         }
-
     }
-    @GetMapping ("/{iD}/edit")
-    public ModelAndView edit(@PathVariable Long iD, RequisicaoFormProfessor requisicao){
-        Optional <Professor> optional = this.professorRepository.findById(iD);
+
+    @GetMapping("/{iD}/edit")
+    public ModelAndView edit(@PathVariable Long iD, RequisicaoFormProfessor requisicao) {
+        Optional<Professor> optional = this.professorRepository.findById(iD);
 
 
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             Professor professor = optional.get();
             requisicao.fromProfessor(professor);
             ModelAndView mv = new ModelAndView("professores/edit");
@@ -86,24 +86,24 @@ public class ProfessorController {
             mv.addObject("listaStatusProfessor", StatusProfessor.values());
 
             return mv;
-        }
-        else{
-            System.out.println("$$$$$$$$$$$$$$$$$ nao achou o professor de iD " +iD + "$$$$$$$$");
+        } else {
+            System.out.println("$$$$$$$$$$$$$$$$$ nao achou o professor de iD " + iD + "$$$$$$$$");
             return new ModelAndView("redirect:/professores");
         }
     }
+
     @PostMapping("/{iD}")
-    public ModelAndView update(@PathVariable Long iD, @Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult){
+    public ModelAndView update(@PathVariable Long iD, @Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-        ModelAndView mv = new ModelAndView("professores/edit");
-        mv.addObject("listaStatusProfessor", StatusProfessor.values());
-        mv.addObject("professoriD", iD);
-          return mv;
+            ModelAndView mv = new ModelAndView("professores/edit");
+            mv.addObject("listaStatusProfessor", StatusProfessor.values());
+            mv.addObject("professoriD", iD);
+            return mv;
 
         } else {
             Optional<Professor> optional = this.professorRepository.findById(iD);
 
-            if (optional.isPresent()){
+            if (optional.isPresent()) {
                 Professor professor = requisicao.toProfessor(optional.get());
                 this.professorRepository.save(professor);
 
@@ -115,25 +115,17 @@ public class ProfessorController {
                 System.out.println("######## nao achou o professor de iD " + iD + "$$$$$$$$");
                 return new ModelAndView("redirect:/professores");
             }
-
-
         }
-
     }
 
-//    public ModelAndView create(@Valid RequisicaoFormProfessor requisicao, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            System.out.println("\n*********** TEM ERROS **************\n");
-//            ModelAndView mv = new ModelAndView("professores/new");
-//            mv.addObject("listaStatusProfessor", StatusProfessor.values());
-//            return mv;
-//        } else {
-//            // Para cada um dos atributos do formulário o spring coloca os valores nesse objeto (nome dos atributos devem ser iguais ao nome dos campos)
-//            Professor professor = requisicao.toProfessor();
-//            this.professorRepository.save(professor);
-//            return new ModelAndView("redirect:/professores/" + professor.getiD());
-//        }
-//
-//    }
-
+    @GetMapping("/{iD}/delete")
+    public String delete(@PathVariable Long iD) {
+        try {
+            this.professorRepository.deleteById(iD);
+            return "redirect:/professores";
+        } catch (EmptyResultDataAccessException e) {
+            System.out.println(e);
+            return "redirect:/professores";
+        }
+    }
 }
